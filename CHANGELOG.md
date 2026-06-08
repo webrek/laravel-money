@@ -4,6 +4,15 @@ All notable changes to `webrek/laravel-money` are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-06-07
+
+### Added
+
+- `Money::sum()`, `Money::min()` and `Money::max()` over any iterable of money.
+- `Money::percentage()` for tax/discount-style calculations.
+- A `sumMoney()` Collection macro (optionally by key) returning the total, or
+  null for an empty collection.
+
 ## [1.1.0] - 2026-06-07
 
 ### Added

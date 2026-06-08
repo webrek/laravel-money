@@ -147,6 +147,27 @@ Money::ofMinor(100, 'USD')->allocate(7, 3);
 The remainder is handed to the largest ratios first, so splits are stable and
 fair, and `array_sum` of the parts always equals the original.
 
+## Aggregates & percentages
+
+```php
+Money::sum([$a, $b, $c]);   // total (all same currency)
+Money::min([$a, $b, $c]);
+Money::max([$a, $b, $c]);
+
+$price->percentage(16);      // 16% — e.g. tax
+$price->percentage('8.25');  // fractional rates welcome
+```
+
+Sum a collection directly, optionally by key:
+
+```php
+$orders->sumMoney('total');      // Money|null
+collect([$a, $b])->sumMoney();   // Money|null
+```
+
+`sumMoney()` returns `null` for an empty collection; `Money::sum()` throws on an
+empty set (there is no currency to return).
+
 ## Comparison
 
 ```php

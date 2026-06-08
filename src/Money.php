@@ -47,6 +47,54 @@ final class Money implements JsonSerializable, Stringable
         return new self(0, self::currency($currency));
     }
 
+    /**
+     * Sum a set of money. All items must share a currency.
+     *
+     * @param  iterable<Money>  $monies
+     */
+    public static function sum(iterable $monies): self
+    {
+        $sum = null;
+
+        foreach ($monies as $money) {
+            $sum = $sum === null ? $money : $sum->plus($money);
+        }
+
+        return $sum ?? throw new InvalidAmountException('Cannot sum an empty set of money.');
+    }
+
+    /**
+     * The smallest of a set of money. All items must share a currency.
+     *
+     * @param  iterable<Money>  $monies
+     */
+    public static function min(iterable $monies): self
+    {
+        $min = null;
+
+        foreach ($monies as $money) {
+            $min = $min === null || $money->isLessThan($min) ? $money : $min;
+        }
+
+        return $min ?? throw new InvalidAmountException('Cannot take the minimum of an empty set of money.');
+    }
+
+    /**
+     * The largest of a set of money. All items must share a currency.
+     *
+     * @param  iterable<Money>  $monies
+     */
+    public static function max(iterable $monies): self
+    {
+        $max = null;
+
+        foreach ($monies as $money) {
+            $max = $max === null || $money->isGreaterThan($max) ? $money : $max;
+        }
+
+        return $max ?? throw new InvalidAmountException('Cannot take the maximum of an empty set of money.');
+    }
+
     public function getCurrency(): Currency
     {
         return $this->currency;
@@ -124,6 +172,14 @@ final class Money implements JsonSerializable, Stringable
         $quotient = self::div((string) $this->minorAmount, $divisor);
 
         return new self(self::roundToInt($quotient, $rounding), $this->currency);
+    }
+
+    /**
+     * A percentage of this amount, e.g. $price->percentage(16) for 16% tax.
+     */
+    public function percentage(int|float|string $percent, RoundingMode $rounding = RoundingMode::HALF_UP): self
+    {
+        return $this->times(self::div(self::normalize($percent), '100'), $rounding);
     }
 
     /**
