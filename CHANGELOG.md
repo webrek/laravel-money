@@ -4,6 +4,16 @@ All notable changes to `webrek/laravel-money` are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-07
+
+### Added
+
+- Currency conversion: `Money::convertTo($currency, $rate)` with an explicit
+  rate and `Money::convert($currency, $provider)` via an `ExchangeRateProvider`.
+- `ExchangeRateProvider` contract and an `ArrayExchangeRateProvider` driver that
+  resolves cross rates from a base-relative rate map (configurable, bound to the
+  contract).
+
 ## [1.0.0] - 2026-06-07
 
 ### Added

@@ -29,4 +29,22 @@ return [
 
     'locale' => env('MONEY_LOCALE'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Exchange rates
+    |--------------------------------------------------------------------------
+    |
+    | Rates for the default ArrayExchangeRateProvider, given relative to a common
+    | base currency (give the base a rate of 1). The cross rate from A to B is
+    | rate(B) / rate(A). Resolve the provider via the ExchangeRateProvider
+    | contract, or pass your own implementation to Money::convert().
+    |
+    |   'rates' => ['USD' => 1, 'EUR' => 0.92, 'MXN' => 17.5],
+    |
+    */
+
+    'exchange' => [
+        'rates' => [],
+    ],
+
 ];

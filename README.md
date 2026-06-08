@@ -92,6 +92,46 @@ Money::ofMinor(1099, 'USD')->times('1.5', RoundingMode::DOWN); // 16.48
 Money::ofMinor(1099, 'USD')->times('1.5', RoundingMode::UP);   // 16.49
 ```
 
+## Currency conversion
+
+Convert with an explicit rate (how many units of the target currency equal one
+unit of the source), with scale and rounding handled for you:
+
+```php
+Money::of('10.00', 'USD')->convertTo('EUR', '0.92');   // EUR 9.20
+Money::of('10.00', 'USD')->convertTo('JPY', '150');    // JPY 1500  (0 decimals)
+Money::of('1000', 'JPY')->convertTo('USD', '0.0067');  // USD 6.70
+```
+
+Or resolve the rate from an `ExchangeRateProvider`. The bundled
+`ArrayExchangeRateProvider` takes a map of currency => rate relative to a common
+base and computes cross rates for you:
+
+```php
+use Webrek\Money\ArrayExchangeRateProvider;
+
+$rates = new ArrayExchangeRateProvider(['USD' => 1, 'EUR' => 0.92, 'MXN' => 17.5]);
+
+Money::of('100', 'USD')->convert('EUR', $rates);   // EUR 92.00
+Money::of('175', 'MXN')->convert('USD', $rates);   // USD 10.00  (cross rate)
+```
+
+Configure the default provider in `config/money.php` and resolve it from the
+container:
+
+```php
+'exchange' => ['rates' => ['USD' => 1, 'EUR' => 0.92, 'MXN' => 17.5]],
+```
+
+```php
+use Webrek\Money\Contracts\ExchangeRateProvider;
+
+$eur = $price->convert('EUR', app(ExchangeRateProvider::class));
+```
+
+Plug in live rates by implementing `ExchangeRateProvider` yourself (e.g. backed
+by an API and cache) and binding it to the contract.
+
 ## Splitting without losing cents
 
 ```php

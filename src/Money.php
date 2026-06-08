@@ -4,6 +4,7 @@ namespace Webrek\Money;
 
 use JsonSerializable;
 use Stringable;
+use Webrek\Money\Contracts\ExchangeRateProvider;
 use Webrek\Money\Exceptions\CurrencyMismatchException;
 use Webrek\Money\Exceptions\InvalidAmountException;
 
@@ -123,6 +124,28 @@ final class Money implements JsonSerializable, Stringable
         $quotient = self::div((string) $this->minorAmount, $divisor);
 
         return new self(self::roundToInt($quotient, $rounding), $this->currency);
+    }
+
+    /**
+     * Convert to another currency using an explicit rate (units of the target
+     * currency per one unit of this currency).
+     */
+    public function convertTo(Currency|string $to, int|float|string $rate, RoundingMode $rounding = RoundingMode::HALF_UP): self
+    {
+        $to = self::currency($to);
+        $targetMajor = self::mul($this->toDecimal(), self::normalize($rate));
+
+        return new self(self::scaleToInt($targetMajor, $to->minorUnit, $rounding), $to);
+    }
+
+    /**
+     * Convert to another currency, resolving the rate from a provider.
+     */
+    public function convert(Currency|string $to, ExchangeRateProvider $rates, RoundingMode $rounding = RoundingMode::HALF_UP): self
+    {
+        $to = self::currency($to);
+
+        return $this->convertTo($to, $rates->rate($this->currency->code, $to->code), $rounding);
     }
 
     public function abs(): self
