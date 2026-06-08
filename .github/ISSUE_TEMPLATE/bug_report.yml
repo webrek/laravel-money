@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a problem with the package
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you get instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: A minimal snippet that reproduces the issue (the Money calls and the result).
+      render: php
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+    validations:
+      required: true
+  - type: dropdown
+    id: extensions
+    attributes:
+      label: Relevant extensions loaded
+      multiple: true
+      options:
+        - ext-intl
+        - ext-bcmath
+        - neither
+    validations:
+      required: true

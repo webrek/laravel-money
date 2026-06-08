@@ -1,0 +1,75 @@
+{
+    "name": "webrek/laravel-money",
+    "description": "An immutable money value object for Laravel with safe arithmetic, allocation and Eloquent casting.",
+    "keywords": [
+        "laravel",
+        "laravel-package",
+        "money",
+        "currency",
+        "value-object",
+        "decimal",
+        "eloquent",
+        "cast",
+        "allocation",
+        "finance"
+    ],
+    "homepage": "https://github.com/webrek/laravel-money",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Victor Hernandez",
+            "email": "victor@arturohernandez.com.mx"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/webrek/laravel-money/issues",
+        "source": "https://github.com/webrek/laravel-money",
+        "security": "https://github.com/webrek/laravel-money/security/advisories/new"
+    },
+    "require": {
+        "php": "^8.2",
+        "illuminate/contracts": "^12.0",
+        "illuminate/support": "^12.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.18",
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^10.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "suggest": {
+        "ext-intl": "Locale-aware currency formatting via formatTo().",
+        "ext-bcmath": "Exact arbitrary-precision arithmetic for multiplication and division."
+    },
+    "autoload": {
+        "psr-4": {
+            "Webrek\\Money\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webrek\\Money\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webrek\\Money\\MoneyServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "stan": "phpstan analyse --memory-limit=512M",
+        "pint": "pint",
+        "pint:check": "pint --test"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
