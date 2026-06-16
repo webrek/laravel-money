@@ -252,7 +252,7 @@ json_encode($money);
 | Component | Version |
 | --------- | ------- |
 | PHP | 8.2+ |
-| Laravel | 12.x |
+| Laravel | 12.x / 13.x |
 | ext-intl | optional, for `formatTo()` |
 | ext-bcmath | optional, for exact large-scale multiplication/division |
 
