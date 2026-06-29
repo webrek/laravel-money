@@ -1,16 +1,16 @@
 # Laravel Money
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/webrek/laravel-money.svg?style=flat-square)](https://packagist.org/packages/webrek/laravel-money)
-[![Total Downloads](https://img.shields.io/packagist/dt/webrek/laravel-money.svg?style=flat-square)](https://packagist.org/packages/webrek/laravel-money)
-[![Tests](https://img.shields.io/github/actions/workflow/status/webrek/laravel-money/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/webrek/laravel-money/actions/workflows/tests.yml)
-[![PHP Version](https://img.shields.io/packagist/php-v/webrek/laravel-money.svg?style=flat-square)](https://php.net)
-[![License](https://img.shields.io/packagist/l/webrek/laravel-money.svg?style=flat-square)](LICENSE)
+[![Última versión en Packagist](https://img.shields.io/packagist/v/webrek/laravel-money.svg?style=flat-square)](https://packagist.org/packages/webrek/laravel-money)
+[![Descargas totales](https://img.shields.io/packagist/dt/webrek/laravel-money.svg?style=flat-square)](https://packagist.org/packages/webrek/laravel-money)
+[![Pruebas](https://img.shields.io/github/actions/workflow/status/webrek/laravel-money/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/webrek/laravel-money/actions/workflows/tests.yml)
+[![Versión de PHP](https://img.shields.io/packagist/php-v/webrek/laravel-money.svg?style=flat-square)](https://php.net)
+[![Licencia](https://img.shields.io/packagist/l/webrek/laravel-money.svg?style=flat-square)](LICENSE)
 
-An immutable money value object for Laravel. Amounts are stored as an integer
-number of minor units (cents), arithmetic is exact, and rounding only ever
-happens where you explicitly ask for it.
+Un objeto de valor inmutable para representar dinero en Laravel. Los montos se
+almacenan como un entero de unidades menores (centavos), la aritmética es exacta
+y el redondeo solo ocurre donde tú lo pides explícitamente.
 
-## Quickstart
+## Inicio rápido
 
 ```bash
 composer require webrek/laravel-money
@@ -19,51 +19,52 @@ composer require webrek/laravel-money
 ```php
 use Webrek\Money\Money;
 
-$price = Money::of('19.99', 'USD');     // from major units
-$tax   = $price->times('0.16');          // 16% — rounded HALF_UP to 3.20
+$price = Money::of('19.99', 'USD');     // desde unidades mayores
+$tax   = $price->times('0.16');          // 16% — redondeado HALF_UP a 3.20
 
 $total = $price->plus($tax);             // USD 23.19
 $total->format();                        // "USD 23.19"
 $total->minorAmount;                     // 2319
 ```
 
-## Why not just use a decimal column and floats?
+## ¿Por qué no usar simplemente una columna decimal y flotantes?
 
-Because money and binary floats do not mix. `0.1 + 0.2` is not `0.3`, and a cent
-that drifts in a loop becomes a reconciliation ticket. The robust approach —
-used by every serious payments system — is to store money as an integer count of
-the smallest unit (cents, fils, yen) and never let a float near it.
+Porque el dinero y los flotantes binarios no se llevan. `0.1 + 0.2` no es `0.3`,
+y un centavo que se desvía dentro de un bucle se convierte en un ticket de
+conciliación. El enfoque robusto —usado por todo sistema de pagos serio— es
+almacenar el dinero como un conteo entero de la unidad más pequeña (centavos,
+fils, yenes) y nunca dejar que un flotante se acerque.
 
-This package gives you that as a first-class type:
+Este paquete te da eso como un tipo de primera clase:
 
-- **Integer-exact.** Every amount is an `int` of minor units plus a `Currency`.
-  Addition and subtraction can't lose precision because there's no precision to
-  lose.
-- **Rounding is explicit.** The only operations that can produce a fraction of a
-  cent — multiplication and division — take a `RoundingMode`, defaulting to
-  `HALF_UP`. Nothing rounds behind your back.
-- **No money is created or destroyed when splitting.** `allocate()` and
-  `split()` distribute every last minor unit.
-- **Currency-aware.** Operations across currencies throw instead of silently
-  producing nonsense, and each currency knows its own scale (USD has 2 decimals,
-  JPY has 0, BHD has 3).
+- **Exacto con enteros.** Cada monto es un `int` de unidades menores más una
+  `Currency`. La suma y la resta no pueden perder precisión porque no hay
+  precisión que perder.
+- **El redondeo es explícito.** Las únicas operaciones que pueden producir una
+  fracción de centavo —la multiplicación y la división— reciben un
+  `RoundingMode`, con `HALF_UP` por defecto. Nada se redondea a tus espaldas.
+- **No se crea ni se destruye dinero al repartir.** `allocate()` y `split()`
+  distribuyen hasta la última unidad menor.
+- **Consciente de la moneda.** Las operaciones entre monedas lanzan una excepción
+  en lugar de producir resultados sin sentido en silencio, y cada moneda conoce
+  su propia escala (USD tiene 2 decimales, JPY tiene 0, BHD tiene 3).
 
-It has no dependency on `moneyphp/money` — it's a focused, Laravel-native type.
+No depende de `moneyphp/money` — es un tipo enfocado y nativo de Laravel.
 
-## Building money
+## Construir dinero
 
 ```php
-Money::of('10.99', 'USD');     // major units (string is safest)
-Money::of(10.99, 'USD');       // float accepted, rounded to the currency scale
-Money::ofMinor(1099, 'USD');   // minor units directly
+Money::of('10.99', 'USD');     // unidades mayores (el string es lo más seguro)
+Money::of(10.99, 'USD');       // se acepta float, redondeado a la escala de la moneda
+Money::ofMinor(1099, 'USD');   // unidades menores directamente
 Money::zero('USD');
 
-// Currency scale is respected automatically:
-Money::of('1000', 'JPY')->minorAmount;   // 1000  (JPY has no minor unit)
-Money::of('1.234', 'BHD')->minorAmount;  // 1234  (BHD has 3)
+// La escala de la moneda se respeta automáticamente:
+Money::of('1000', 'JPY')->minorAmount;   // 1000  (JPY no tiene unidad menor)
+Money::of('1.234', 'BHD')->minorAmount;  // 1234  (BHD tiene 3)
 ```
 
-## Arithmetic
+## Aritmética
 
 ```php
 $a = Money::of('10.00', 'USD');
@@ -76,14 +77,14 @@ $a->dividedBy(3);         // 3.33  (HALF_UP)
 $a->negated();            // -10.00
 $a->abs();
 
-$a->plus(Money::of('1', 'EUR'));   // throws CurrencyMismatchException
+$a->plus(Money::of('1', 'EUR'));   // lanza CurrencyMismatchException
 ```
 
-### Rounding modes
+### Modos de redondeo
 
-`times()` and `dividedBy()` accept any [`RoundingMode`](src/RoundingMode.php):
-`UP`, `DOWN`, `CEILING`, `FLOOR`, `HALF_UP` (default), `HALF_DOWN`, `HALF_EVEN`
-(banker's rounding).
+`times()` y `dividedBy()` aceptan cualquier [`RoundingMode`](src/RoundingMode.php):
+`UP`, `DOWN`, `CEILING`, `FLOOR`, `HALF_UP` (por defecto), `HALF_DOWN`, `HALF_EVEN`
+(redondeo bancario).
 
 ```php
 use Webrek\Money\RoundingMode;
@@ -92,20 +93,20 @@ Money::ofMinor(1099, 'USD')->times('1.5', RoundingMode::DOWN); // 16.48
 Money::ofMinor(1099, 'USD')->times('1.5', RoundingMode::UP);   // 16.49
 ```
 
-## Currency conversion
+## Conversión de moneda
 
-Convert with an explicit rate (how many units of the target currency equal one
-unit of the source), with scale and rounding handled for you:
+Convierte con una tasa explícita (cuántas unidades de la moneda destino equivalen
+a una unidad de la moneda origen), con la escala y el redondeo resueltos por ti:
 
 ```php
 Money::of('10.00', 'USD')->convertTo('EUR', '0.92');   // EUR 9.20
-Money::of('10.00', 'USD')->convertTo('JPY', '150');    // JPY 1500  (0 decimals)
+Money::of('10.00', 'USD')->convertTo('JPY', '150');    // JPY 1500  (0 decimales)
 Money::of('1000', 'JPY')->convertTo('USD', '0.0067');  // USD 6.70
 ```
 
-Or resolve the rate from an `ExchangeRateProvider`. The bundled
-`ArrayExchangeRateProvider` takes a map of currency => rate relative to a common
-base and computes cross rates for you:
+O resuelve la tasa desde un `ExchangeRateProvider`. El `ArrayExchangeRateProvider`
+incluido recibe un mapa de moneda => tasa relativa a una base común y calcula las
+tasas cruzadas por ti:
 
 ```php
 use Webrek\Money\ArrayExchangeRateProvider;
@@ -113,11 +114,11 @@ use Webrek\Money\ArrayExchangeRateProvider;
 $rates = new ArrayExchangeRateProvider(['USD' => 1, 'EUR' => 0.92, 'MXN' => 17.5]);
 
 Money::of('100', 'USD')->convert('EUR', $rates);   // EUR 92.00
-Money::of('175', 'MXN')->convert('USD', $rates);   // USD 10.00  (cross rate)
+Money::of('175', 'MXN')->convert('USD', $rates);   // USD 10.00  (tasa cruzada)
 ```
 
-Configure the default provider in `config/money.php` and resolve it from the
-container:
+Configura el proveedor por defecto en `config/money.php` y resuélvelo desde el
+contenedor:
 
 ```php
 'exchange' => ['rates' => ['USD' => 1, 'EUR' => 0.92, 'MXN' => 17.5]],
@@ -129,46 +130,47 @@ use Webrek\Money\Contracts\ExchangeRateProvider;
 $eur = $price->convert('EUR', app(ExchangeRateProvider::class));
 ```
 
-Plug in live rates by implementing `ExchangeRateProvider` yourself (e.g. backed
-by an API and cache) and binding it to the contract.
+Conecta tasas en vivo implementando tú mismo `ExchangeRateProvider` (por ejemplo,
+respaldado por una API y caché) y vinculándolo al contrato.
 
-## Splitting without losing cents
+## Repartir sin perder centavos
 
 ```php
-// Split a bill three ways — the leftover cent is handed out, nothing vanishes.
+// Divide una cuenta en tres — el centavo sobrante se reparte, nada se pierde.
 $shares = Money::ofMinor(100, 'USD')->split(3);
-// [USD 0.34, USD 0.33, USD 0.33]   (sums back to exactly 1.00)
+// [USD 0.34, USD 0.33, USD 0.33]   (suma de vuelta exactamente 1.00)
 
-// Allocate by ratio (e.g. a 70/30 revenue share):
+// Reparte por proporción (por ejemplo, un reparto de ingresos 70/30):
 Money::ofMinor(100, 'USD')->allocate(7, 3);
 // [USD 0.70, USD 0.30]
 ```
 
-The remainder is handed to the largest ratios first, so splits are stable and
-fair, and `array_sum` of the parts always equals the original.
+El residuo se entrega primero a las proporciones más grandes, de modo que los
+repartos son estables y justos, y `array_sum` de las partes siempre es igual al
+original.
 
-## Aggregates & percentages
+## Agregados y porcentajes
 
 ```php
-Money::sum([$a, $b, $c]);   // total (all same currency)
+Money::sum([$a, $b, $c]);   // total (todas la misma moneda)
 Money::min([$a, $b, $c]);
 Money::max([$a, $b, $c]);
 
-$price->percentage(16);      // 16% — e.g. tax
-$price->percentage('8.25');  // fractional rates welcome
+$price->percentage(16);      // 16% — por ejemplo, impuesto
+$price->percentage('8.25');  // las tasas fraccionarias son bienvenidas
 ```
 
-Sum a collection directly, optionally by key:
+Suma una colección directamente, opcionalmente por clave:
 
 ```php
 $orders->sumMoney('total');      // Money|null
 collect([$a, $b])->sumMoney();   // Money|null
 ```
 
-`sumMoney()` returns `null` for an empty collection; `Money::sum()` throws on an
-empty set (there is no currency to return).
+`sumMoney()` devuelve `null` para una colección vacía; `Money::sum()` lanza una
+excepción con un conjunto vacío (no hay moneda que devolver).
 
-## Comparison
+## Comparación
 
 ```php
 $a->isEqualTo($b);
@@ -182,12 +184,12 @@ $a->isPositive();
 $a->isNegative();
 ```
 
-## Eloquent casting
+## Casting con Eloquent
 
-Store minor units in an integer column and cast it to `Money`.
+Almacena las unidades menores en una columna entera y conviértela (cast) a `Money`.
 
-**Single currency** — the column holds minor units; the currency is fixed in the
-cast:
+**Moneda única** — la columna contiene las unidades menores; la moneda es fija en
+el cast:
 
 ```php
 use Webrek\Money\Casts\MoneyCast;
@@ -200,28 +202,28 @@ protected function casts(): array
 
 ```php
 $product->price = Money::of('19.99', 'USD');
-$product->save();                 // stores 1999 in `price`
+$product->save();                 // almacena 1999 en `price`
 $product->price->format();        // "USD 19.99"
 ```
 
-**Multi-currency** — add a companion `{column}_currency` string column and omit
-the code:
+**Multimoneda** — agrega una columna string acompañante `{column}_currency` y
+omite el código:
 
 ```php
 protected function casts(): array
 {
-    return ['cost' => MoneyCast::class];   // reads/writes `cost` and `cost_currency`
+    return ['cost' => MoneyCast::class];   // lee/escribe `cost` y `cost_currency`
 }
 ```
 
 ```php
-$product->cost = Money::of('15.50', 'EUR');   // stores 1550 + "EUR"
+$product->cost = Money::of('15.50', 'EUR');   // almacena 1550 + "EUR"
 ```
 
-Assigning a currency that doesn't match a fixed-currency column throws a
+Asignar una moneda que no coincide con una columna de moneda fija lanza una
 `CurrencyMismatchException`.
 
-## Validation
+## Validación
 
 ```php
 use Webrek\Money\Rules\CurrencyCode;
@@ -231,13 +233,13 @@ $request->validate([
 ]);
 ```
 
-## Formatting & serialization
+## Formato y serialización
 
 ```php
 $money = Money::ofMinor(123456, 'USD');
 
-$money->format();             // "USD 1,234.56"   (locale-independent)
-$money->formatTo('en_US');    // "$1,234.56"      (requires ext-intl)
+$money->format();             // "USD 1,234.56"   (independiente del locale)
+$money->formatTo('en_US');    // "$1,234.56"      (requiere ext-intl)
 $money->toDecimal();          // "1234.56"
 (string) $money;              // "1234.56 USD"
 
@@ -245,33 +247,33 @@ json_encode($money);
 // {"amount":"1234.56","minorAmount":123456,"currency":"USD"}
 ```
 
-`formatTo()` uses the intl extension; without it, it falls back to `format()`.
+`formatTo()` usa la extensión intl; sin ella, recae en `format()`.
 
-## Requirements
+## Requisitos
 
-| Component | Version |
+| Componente | Versión |
 | --------- | ------- |
 | PHP | 8.2+ |
 | Laravel | 12.x / 13.x |
-| ext-intl | optional, for `formatTo()` |
-| ext-bcmath | optional, for exact large-scale multiplication/division |
+| ext-intl | opcional, para `formatTo()` |
+| ext-bcmath | opcional, para multiplicación/división exacta a gran escala |
 
-## Testing
+## Pruebas
 
 ```bash
 composer install
 composer test
 ```
 
-## Contributing
+## Contribuir
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+Consulta [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Security
+## Seguridad
 
-Please review the [security policy](SECURITY.md) before reporting a
-vulnerability.
+Por favor revisa la [política de seguridad](SECURITY.md) antes de reportar una
+vulnerabilidad.
 
-## License
+## Licencia
 
-The MIT License (MIT). See [LICENSE](LICENSE).
+La Licencia MIT (MIT). Consulta [LICENSE](LICENSE).
